@@ -49,7 +49,7 @@ lazy val `webapi-impl` = (project in file("webapi-impl"))
     libraryDependencies ++= Seq(
       "com.softwaremill.macwire" %% "macros" % MacwireVersion % "provided",
       lagomScaladslKafkaBroker,
-      lagomScaladslPersistenceCassandra
+      lagomScaladslPersistenceJdbc
     )
   )
   .dependsOn(`webapi`)
