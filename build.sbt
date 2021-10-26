@@ -3,6 +3,8 @@ ThisBuild / organization := "com.estrondo"
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / version := "0.0.1-SNAPSHOT"
 
+ThisBuild / lagomCassandraEnabled := false
+
 val MacwireVersion = "2.5.0"
 
 lazy val root = (project in file("."))
@@ -49,7 +51,8 @@ lazy val `webapi-impl` = (project in file("webapi-impl"))
     libraryDependencies ++= Seq(
       "com.softwaremill.macwire" %% "macros" % MacwireVersion % "provided",
       lagomScaladslKafkaBroker,
-      lagomScaladslPersistenceJdbc
+      lagomScaladslPersistenceJdbc,
+      "org.postgresql" % "postgresql" % "42.3.0"
     )
   )
   .dependsOn(`webapi`)
