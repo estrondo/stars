@@ -4,5 +4,5 @@ import play.api.libs.json.{Json, OFormat}
 
 package object persistence {
 
-  implicit val waitingFormat: OFormat[SimulationState.Waiting] = Json.format[SimulationState.Waiting]
+  implicit val simulationEvent: OFormat[SimulationEvent.Created] = Json.format[SimulationEvent.Created]
 }

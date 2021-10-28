@@ -5,6 +5,8 @@ ThisBuild / version := "0.0.1-SNAPSHOT"
 
 ThisBuild / lagomCassandraEnabled := false
 
+val ScalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+
 val MacwireVersion = "2.5.0"
 
 lazy val root = (project in file("."))
@@ -52,7 +54,8 @@ lazy val `webapi-impl` = (project in file("webapi-impl"))
       "com.softwaremill.macwire" %% "macros" % MacwireVersion % "provided",
       lagomScaladslKafkaBroker,
       lagomScaladslPersistenceJdbc,
-      "org.postgresql" % "postgresql" % "42.3.0"
+      "org.postgresql" % "postgresql" % "42.3.0",
+      ScalaLogging
     )
   )
   .dependsOn(`webapi`)
