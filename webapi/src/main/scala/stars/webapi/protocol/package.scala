@@ -10,10 +10,10 @@ package object protocol {
 
   implicit val blackHoleOrderFormat: OFormat[BlackHoleOrder] = Json.format[BlackHoleOrder]
 
-  implicit val simulationOrderFormat: OFormat[SimulationOrder] = Json.format[SimulationOrder]
+  implicit val simulationOrderFormat: OFormat[CreateSimulation] = Json.format[CreateSimulation]
 
-  implicit val simulationOrderResponseFormat: OFormat[SimulationOrderResponse] = Json.format[SimulationOrderResponse]
+  implicit val simulationOrderResponseFormat: OFormat[CreateSimulationResponse] = Json.format[CreateSimulationResponse]
 
-  implicit val simulationOrderIDFormat: OFormat[SimulationOrderID] = Json.format[SimulationOrderID]
+  implicit val simulationOrderIDFormat: OFormat[SimulationOrder] = Json.format[SimulationOrder]
 
 }

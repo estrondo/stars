@@ -4,7 +4,7 @@ import akka.persistence.typed.scaladsl.{Effect, ReplyEffect}
 import stars.webapi.impl.persistence.SimulationCommand.Create
 import stars.webapi.impl.persistence.SimulationEvent.Created
 import stars.webapi.impl.persistence.SimulationState.RE
-import stars.webapi.protocol.SimulationOrderID
+import stars.webapi.protocol.SimulationOrder
 
 object SimulationState {
 
@@ -26,7 +26,7 @@ object SimulationState {
 
   type RE = ReplyEffect[SimulationEvent, SimulationState]
 
-  case class Waiting(order: SimulationOrderID) extends SimulationState {
+  case class Waiting(order: SimulationOrder) extends SimulationState {
 
     override def apply(command: SimulationCommand): RE = {
       throw new UnsupportedOperationException

@@ -1,13 +1,10 @@
 package stars.webapi.protocol
 
-case class SimulationOrder(
-  name: String,
-  email: String,
-  segments: Seq[Segment],
-  minStars: Option[Int],
-  maxStars: Option[Int],
-  minStarWeight: Option[SolarMass],
-  maxStarWeight: Option[SolarMass],
-  starWeightDistribution: Option[Int],
-  blackHoles: Seq[BlackHoleOrder]
-)
+import java.util.UUID
+
+object SimulationOrder {
+
+  def apply(command: CreateSimulation): SimulationOrder = SimulationOrder(UUID.randomUUID(), command)
+}
+
+case class SimulationOrder(id: UUID, command: CreateSimulation)

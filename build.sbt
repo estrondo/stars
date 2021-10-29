@@ -6,6 +6,8 @@ ThisBuild / version := "0.0.1-SNAPSHOT"
 ThisBuild / lagomCassandraEnabled := false
 
 val ScalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+val LogBack = "ch.qos.logback" % "logback-core" % "1.2.6"
+val Flyway = "org.flywaydb" % "flyway-core" % "8.0.2"
 
 val MacwireVersion = "2.5.0"
 
@@ -55,7 +57,9 @@ lazy val `webapi-impl` = (project in file("webapi-impl"))
       lagomScaladslKafkaBroker,
       lagomScaladslPersistenceJdbc,
       "org.postgresql" % "postgresql" % "42.3.0",
-      ScalaLogging
+      ScalaLogging,
+      LogBack,
+      Flyway
     )
   )
   .dependsOn(`webapi`)

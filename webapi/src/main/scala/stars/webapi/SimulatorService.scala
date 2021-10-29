@@ -3,7 +3,7 @@ package stars.webapi
 import com.lightbend.lagom.scaladsl.api.broker.Topic
 import com.lightbend.lagom.scaladsl.api.{Descriptor, Service}
 import stars.webapi.SimulatorService.SimulationOrderResponseTopic
-import stars.webapi.protocol.SimulationOrderResponse
+import stars.webapi.protocol.CreateSimulationResponse
 
 object SimulatorService {
 
@@ -18,5 +18,5 @@ trait SimulatorService extends Service {
       .withTopics(topic(SimulationOrderResponseTopic, orderTopic))
   }
 
-  def orderTopic: Topic[SimulationOrderResponse]
+  def orderTopic: Topic[CreateSimulationResponse]
 }

@@ -1,11 +1,11 @@
 package stars.webapi.impl.persistence
 
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag, AggregateEventTagger}
-import stars.webapi.protocol.SimulationOrderID
+import stars.webapi.protocol.SimulationOrder
 
 object SimulationEvent {
 
-  case class Created(order: SimulationOrderID) extends SimulationEvent
+  case class Created(order: SimulationOrder) extends SimulationEvent
 
   //noinspection TypeAnnotation
   val Tag = AggregateEventTag.sharded[SimulationEvent](numShards = 10)
