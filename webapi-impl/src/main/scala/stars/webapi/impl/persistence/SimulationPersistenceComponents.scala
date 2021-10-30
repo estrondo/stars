@@ -7,7 +7,7 @@ import com.lightbend.lagom.scaladsl.server.LagomServerComponents
 import com.softwaremill.macwire.wire
 import controllers.AssetsComponents
 import play.api.db.HikariCPComponents
-import stars.webapi.impl.database.SimulationRepository
+import stars.webapi.impl.database.{Migration, SimulationRepository}
 import stars.webapi.impl.infra.SimulationJsonSerializerRegistry
 
 import scala.concurrent.ExecutionContextExecutor
@@ -18,7 +18,7 @@ trait SimulationPersistenceComponents
     with HikariCPComponents
     with AssetsComponents {
 
-  private implicit def executor: ExecutionContextExecutor = actorSystem.dispatcher
+  override def jsonSerializerRegistry: JsonSerializerRegistry = SimulationJsonSerializerRegistry
 
   clusterSharding.init(Entity(SimulationPersistence.typeKey) { ctx =>
     SimulationPersistence(ctx)
@@ -26,8 +26,9 @@ trait SimulationPersistenceComponents
 
   readSide.register(wire[SimulationReadSideProcessor])
 
-  override def jsonSerializerRegistry: JsonSerializerRegistry = SimulationJsonSerializerRegistry
-
+  Migration(db)
 
   def simulationRepository: SimulationRepository
+
+  private implicit def executor: ExecutionContextExecutor = actorSystem.dispatcher
 }

@@ -8,7 +8,7 @@ package object protocol {
 
   type SolarMass = Double
 
-  implicit val blackHoleOrderFormat: OFormat[BlackHoleOrder] = Json.format[BlackHoleOrder]
+  implicit val blackHoleOrderFormat: OFormat[BlackHole] = Json.format[BlackHole]
 
   implicit val simulationOrderFormat: OFormat[CreateSimulation] = Json.format[CreateSimulation]
 

@@ -18,12 +18,13 @@ object SimulationPersistence {
   def apply(ctx: EntityContext[SimulationCommand]): Behavior[SimulationCommand] = {
 
     logger.debug("EventSource for simulation {} was requested.", ctx.entityId)
-    EventSourcedBehavior.withEnforcedReplies[SimulationCommand, SimulationEvent, SimulationState](
-      persistenceId = PersistenceId(ctx.entityTypeKey.name, ctx.entityId),
-      emptyState = empty,
-      commandHandler = (state, command) => state(command),
-      eventHandler = (state, event) => state(event)
-    )
+    EventSourcedBehavior
+      .withEnforcedReplies[SimulationCommand, SimulationEvent, SimulationState](
+        persistenceId = PersistenceId(ctx.entityTypeKey.name, ctx.entityId),
+        emptyState = empty,
+        commandHandler = (state, command) => state(command),
+        eventHandler = (state, event) => state(event)
+      )
       .withTagger(AkkaTaggerAdapter.fromLagom(ctx, SimulationEvent.Tag))
   }
 

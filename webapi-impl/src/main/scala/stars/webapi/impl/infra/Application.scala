@@ -16,8 +16,7 @@ abstract class Application(context: LagomApplicationContext)
   extends LagomApplication(context)
     with LagomKafkaComponents
     with SimulationPersistenceComponents
-    with AhcWSComponents
-    with SlickPersistenceComponents {
+    with AhcWSComponents {
 
   lazy val simulatorService: SimulatorService = serviceClient.implement[SimulatorService]
 

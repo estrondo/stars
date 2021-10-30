@@ -9,5 +9,5 @@ case class CreateSimulation(
   minStarWeight: Option[SolarMass],
   maxStarWeight: Option[SolarMass],
   starWeightDistribution: Option[Int],
-  blackHoles: Seq[BlackHoleOrder]
+  blackHoles: Seq[BlackHole]
 )
