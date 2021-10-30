@@ -4,7 +4,7 @@ import java.util.UUID
 
 object SimulationOrder {
 
-  def apply(command: CreateSimulation): SimulationOrder = SimulationOrder(UUID.randomUUID(), command)
+  def apply(simulation: CreateSimulation): SimulationOrder = SimulationOrder(UUID.randomUUID(), simulation)
 }
 
-case class SimulationOrder(id: UUID, command: CreateSimulation)
+case class SimulationOrder(id: UUID, simulation: CreateSimulation)

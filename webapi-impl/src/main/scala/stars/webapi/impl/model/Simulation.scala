@@ -7,7 +7,7 @@ import java.util.UUID
 object Simulation {
 
   def from(order: SimulationOrder): Simulation = {
-    import order.command._
+    import order.simulation._
     Simulation(id = order.id, owner = name, email = email)
   }
 }

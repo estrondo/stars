@@ -1,15 +1,38 @@
+import play.core.PlayVersion
 
 ThisBuild / organization := "com.estrondo"
 ThisBuild / scalaVersion := "2.13.6"
 ThisBuild / version := "0.0.1-SNAPSHOT"
 
-ThisBuild / lagomCassandraEnabled := false
+ThisBuild / Test / fork := true
 
-val ScalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
-val LogBack = "ch.qos.logback" % "logback-core" % "1.2.6"
-val Flyway = "org.flywaydb" % "flyway-core" % "8.0.2"
-
+val AkkaVersion = PlayVersion.akkaVersion
 val MacwireVersion = "2.5.0"
+
+val Flyway = "org.flywaydb" % "flyway-core" % "8.0.2"
+val ScalaTest = "org.scalatest" %% "scalatest" % "3.2.10" % "test"
+val Postgres = "org.postgresql" % "postgresql" % "42.3.0"
+
+val Logging = Seq(
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
+  "ch.qos.logback" % "logback-core" % "1.2.6"
+)
+
+val AkkaPersistence = Seq(
+  "com.typesafe.akka" %% "akka-persistence-typed" % AkkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-testkit" % AkkaVersion % Test
+)
+
+val AkkaActors = Seq(
+  "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+  "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test
+)
+
+val Testcontainers = Seq(
+  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.39.10" % "test",
+  "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.39.10" % "test"
+)
+
 
 lazy val root = (project in file("."))
   .settings(
@@ -37,7 +60,13 @@ lazy val `simulation-context` = (project in file("simulation-context"))
 
 lazy val `simulator` = (project in file("simulator"))
   .settings(
-    name := "stars-simulator"
+    name := "stars-simulator",
+    libraryDependencies ++= Seq(
+      ScalaTest
+    ) ++ Set(
+      AkkaActors,
+      Logging
+    ).flatten
   )
   .dependsOn(`bhtree-engine`, `simulation-engine`, `simulation-context`)
 
@@ -52,15 +81,20 @@ lazy val `webapi` = (project in file("webapi"))
 lazy val `webapi-impl` = (project in file("webapi-impl"))
   .settings(
     name := "stars-webapi-impl",
+    lagomCassandraEnabled := false,
     libraryDependencies ++= Seq(
       "com.softwaremill.macwire" %% "macros" % MacwireVersion % "provided",
       lagomScaladslKafkaBroker,
       lagomScaladslPersistenceJdbc,
-      "org.postgresql" % "postgresql" % "42.3.0",
-      ScalaLogging,
-      LogBack,
-      Flyway
-    )
+      lagomScaladslTestKit,
+      Postgres,
+      Flyway,
+      ScalaTest
+    ) ++ Set(
+      AkkaPersistence,
+      Logging,
+      Testcontainers
+    ).flatten
   )
   .dependsOn(`webapi`)
   .enablePlugins(LagomScala)

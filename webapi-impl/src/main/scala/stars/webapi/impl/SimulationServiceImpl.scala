@@ -8,9 +8,9 @@ import com.lightbend.lagom.scaladsl.broker.TopicProducer
 import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
 import com.lightbend.lagom.scaladsl.server.ServerServiceCall
 import com.typesafe.scalalogging.StrictLogging
+import stars.webapi.{SimulationService, SimulatorService}
 import stars.webapi.impl.persistence.{SimulationCommand, SimulationEvent, SimulationPersistence}
 import stars.webapi.protocol.{CreateSimulationResponse, SimulationOrder}
-import stars.webapi.{SimulationService, SimulatorService}
 
 import java.time.Instant
 import scala.concurrent.ExecutionContextExecutor
