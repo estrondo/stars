@@ -1,0 +1,9 @@
+#!/bin/sh
+
+env \
+DB_DEFAULT_DRIVER=org.postgresql.Driver \
+DB_DEFAULT_URL=jdbc:postgresql://localhost:5432/stars \
+JDBC_DEFAULTS_SLICK_PROFILE=slick.jdbc.PostgresProfile$ \
+DB_DEFAULT_USERNAME=stars \
+DB_DEFAULT_PASSWORD=stars \
+sbt 'webapi-impl/runAll'
