@@ -1,5 +1,6 @@
 package stars.webapi.impl
 
+import akka.stream.testkit.scaladsl.TestSink
 import stars.webapi.impl.fixture.SingleCreateSimulation
 import stars.webapi.impl.persistence.SimulationEvent
 import stars.webapi.protocol.{CreateSimulationResponse, SimulationOrder}
@@ -26,6 +27,16 @@ class ServiceSpec extends AbstractServiceSpec {
       } yield {
         opt shouldBe defined
         opt.get.email should be(command.email)
+      }
+    }
+
+    "it should publish on topic" in {
+      val command = SingleCreateSimulation.newCreateSimulation
+      for (result <- client.simulate.invoke(command)) yield {
+        source
+          .runWith(TestSink.probe[SimulationOrder])
+          .request(1)
+          .expectNext shouldNot be(SimulationOrder(result.id, command))
       }
     }
   }

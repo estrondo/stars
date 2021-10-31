@@ -1,4 +1,4 @@
-package stars.webapi.impl.persistence.simulation
+package stars.webapi.impl.persistence.behaviors
 
 import akka.persistence.typed.scaladsl.Effect
 import stars.webapi.impl.persistence.SimulationCommand.Create

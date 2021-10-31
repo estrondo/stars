@@ -1,7 +1,7 @@
 package stars.webapi.impl.persistence
 
 import akka.persistence.typed.scaladsl.ReplyEffect
-import stars.webapi.impl.persistence.simulation.{EmptyBehavior, SimulationStateBehavior, WaitingBehavior}
+import stars.webapi.impl.persistence.behaviors.{EmptyBehavior, SimulationStateBehavior, WaitingBehavior}
 import stars.webapi.protocol.SimulationOrder
 
 object SimulationState {
