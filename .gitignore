@@ -2,3 +2,11 @@
 *.log
 .metals/
 .vscode/
+.bloop/
+.bsp/
+.idea/
+target/
+project/*
+!project/build.properties
+!project/plugins.sbt
+.attach_pid*
