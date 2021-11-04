@@ -9,3 +9,19 @@ services:
       POSTGRES_DB: stars
     ports:
       - "5432:5432"
+    networks:
+      stars-github:
+        aliases:
+          - pg01
+          - postgres-da-massa
+  archlinux:
+    build: ./archlinux
+    networks:
+      stars-github:
+        aliases:
+          - my-little-poney
+
+networks:
+  stars-github:
+    driver: overlay
+    attachable: true

@@ -8,12 +8,11 @@ import java.io.PrintWriter
 import java.sql.Connection
 import java.util.logging.Logger
 import javax.sql.DataSource
-import scala.concurrent.ExecutionContextExecutor
 
 object Migration extends StrictLogging {
 
-  def apply(ds: Database)(implicit executor: ExecutionContextExecutor): Unit = {
-    logger.debug("Applying migration...")
+  def apply(ds: Database): Unit = {
+    logger.debug("Applying migration.")
 
     try {
       Flyway

@@ -2,9 +2,9 @@ package stars.webapi
 
 import akka.Done
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
-import scala.util.{Failure, Success}
-import scala.languageFeature.implicitConversions
+import java.util.UUID
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success, Try}
 
 package object impl {
 
@@ -18,8 +18,12 @@ package object impl {
       }
     }
 
-    def toDone(implicit executor: ExecutionContextExecutor): Future[Done] = {
+    def toDone(implicit executor: ExecutionContext): Future[Done] = {
       for (_ <- x) yield Done
+    }
+
+    def toTry()(implicit executor: ExecutionContext): Future[Try[T]] = {
+      x.transform(Success(_))
     }
   }
 
