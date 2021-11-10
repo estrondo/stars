@@ -1,53 +1,39 @@
 package stars.webapi.impl
 
-import akka.cluster.sharding.typed.scaladsl.{ClusterSharding, EntityRef}
+import akka.cluster.sharding.typed.scaladsl.EntityRef
 import akka.util.Timeout
-import com.lightbend.lagom.scaladsl.api.broker.Topic
 import com.lightbend.lagom.scaladsl.api.transport.{MessageProtocol, ResponseHeader}
-import com.lightbend.lagom.scaladsl.broker.TopicProducer
-import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
 import com.lightbend.lagom.scaladsl.server.ServerServiceCall
 import com.typesafe.scalalogging.StrictLogging
-import stars.webapi.{SimulationService, SimulatorService}
-import stars.webapi.impl.persistence.{SimulationCommand, SimulationEvent, SimulationPersistence}
-import stars.webapi.protocol.{CreateSimulationResponse, SimulationOrder}
+import stars.webapi.impl.mapper.{SimulationToWebAPI, WebAPIToSimulation}
+import stars.webapi.impl.simulator.Command
+import stars.webapi.protocol.CreateSimulationResponse
+import stars.webapi.{SimulationException, SimulationService}
 
-import java.time.Instant
+import java.util.UUID
 import scala.concurrent.ExecutionContextExecutor
-import scala.concurrent.duration._
 
 class SimulationServiceImpl(
-  simulator: SimulatorService,
-  clusterSharding: ClusterSharding,
-  persistentRegistry: PersistentEntityRegistry)(implicit executor: ExecutionContextExecutor)
-  extends SimulationService with StrictLogging {
+  getEntity: UUID => EntityRef[Command]
+)(implicit executor: ExecutionContextExecutor, timeout: Timeout) extends SimulationService with StrictLogging {
 
-  private val Accepted = ResponseHeader(202, MessageProtocol.empty, Nil)
-
-  private implicit val timeout: Timeout = Timeout(5.seconds)
+  private val AcceptedStatus = ResponseHeader(202, MessageProtocol.empty, Nil)
 
   //noinspection TypeAnnotation
-  override def simulate = ServerServiceCall { (_, command) =>
-    logger.info("Received a new simulation order.")
-    val order = SimulationOrder(command)
-    for {
-      response <- entityFor(order.id.toString).ask(SimulationCommand.Create(order, _))
-    } yield response match {
-      case Right(SimulationOrder(id, order)) => Accepted -> CreateSimulationResponse(id, Instant.now(), order)
-      case Left((_, cause)) => throw cause
-    }
-  }
+  override def simulate = ServerServiceCall { (_, createSimulation) =>
 
-  override def simulationOrderTopic: Topic[SimulationOrder] = {
-    TopicProducer.taggedStreamWithOffset(SimulationEvent.Tag) { (tag, offset) =>
-      persistentRegistry.eventStream(tag, offset)
-        .collect {
-          case EventStreamElement(_, SimulationEvent.Created(order), offset) => (order, offset)
-        }
-    }
-  }
+    val id = UUID.randomUUID()
+    logger.debug("Receive a new simulation, it will have id {}.", id)
 
-  private def entityFor(id: String): EntityRef[SimulationCommand] = {
-    clusterSharding.entityRefFor(SimulationPersistence.typeKey, id)
+    val command = WebAPIToSimulation.newSimulation(id.toString, createSimulation)
+    for (Command.NewResponse(simulation, error) <- getEntity(id).ask(Command.New(command, _))) yield error match {
+      case None =>
+        logger.debug("Simulation {} was accepted.", id)
+        AcceptedStatus -> CreateSimulationResponse(id, SimulationToWebAPI.createSimulation(simulation.description))
+
+      case Some(cause) =>
+        logger.warn("An error on simulation {}!", id, cause)
+        throw SimulationException.Unexpected("Impossible to accept!", cause)
+    }
   }
 }

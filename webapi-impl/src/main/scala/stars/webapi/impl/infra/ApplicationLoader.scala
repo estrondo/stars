@@ -3,7 +3,7 @@ package stars.webapi.impl.infra
 import com.lightbend.lagom.scaladsl.api.{Descriptor, ServiceLocator}
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.server.{LagomApplication, LagomApplicationContext, LagomApplicationLoader}
-import stars.webapi.{SimulationService, SimulatorService}
+import stars.webapi.SimulationService
 
 class ApplicationLoader extends LagomApplicationLoader {
 

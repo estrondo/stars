@@ -1,7 +1,7 @@
 package stars.webapi.impl.database
 
-class API extends slick.jdbc.PostgresProfile.API
+import slick.jdbc.PostgresProfile
 
-object API extends API {
+object API extends API
 
-}
+class API extends PostgresProfile.API

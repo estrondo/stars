@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "protocol.proto";
+
+package stars.simulation.protocol;
+
+message SimulationCommand {
+
+  oneof sealed_value {
+    NewSimulation new_simulation = 1;
+    StartSimulation start_simulation = 2;
+  }
+}
+
+message NewSimulation {
+  string id = 1;
+  Description description = 2;
+}
+
+message StartSimulation {
+  string id = 1;
+}
+
+

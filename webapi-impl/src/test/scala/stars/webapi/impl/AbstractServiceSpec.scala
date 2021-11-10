@@ -1,50 +1,62 @@
 package stars.webapi.impl
 
-import akka.Done
-import akka.actor.ActorSystem
-import akka.persistence.query.NoOffset
-import akka.stream.Materializer
-import com.dimafeng.testcontainers.Container
-import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
-import com.lightbend.lagom.scaladsl.testkit.{ReadSideTestDriver, ServiceTest, TestTopicComponents}
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.freespec.AsyncFreeSpecLike
-import org.scalatest.matchers.should.Matchers
+import akka.actor.testkit.typed.scaladsl.ActorTestKit
+import akka.cluster.sharding.typed.scaladsl.EntityRef
+import akka.cluster.sharding.typed.testkit.scaladsl.TestEntityRef
+import com.lightbend.lagom.scaladsl.server.{LagomApplication, LocalServiceLocator}
+import com.lightbend.lagom.scaladsl.testkit.{ServiceTest, TestTopicComponents}
+import play.api.libs.ws.ahc.AhcWSComponents
 import stars.webapi.SimulationService
-import stars.webapi.impl.docker.PostgresqlSpec
-import stars.webapi.impl.infra.Application
-import stars.webapi.impl.persistence.SimulationEvent
+import stars.webapi.impl.infra.{SimulatorComponentRequired, WebAPIComponent}
+import stars.webapi.impl.simulator.{Command, SimulatorEntity}
 
 import java.util.UUID
-import scala.concurrent.Future
 
-abstract class AbstractServiceSpec extends AsyncFreeSpecLike with BeforeAndAfterAll with Matchers with PostgresqlSpec {
+abstract class AbstractServiceSpec extends AsyncSpec {
 
-  override val container: Container = postgresContainer
+  lazy val server = ServiceTest.startServer(ServiceTest.defaultSetup) { ctx =>
+    new LagomApplication(ctx)
+      with WebAPIComponent
+      with AhcWSComponents
+      with LocalServiceLocator
+      with TestTopicComponents
+      with SimulatorComponentRequired {
 
-  lazy val server = ServiceTest.startServer(ServiceTest.defaultSetup.withJdbc()) { ctx =>
-    new Application(ctx) with LocalServiceLocator with TestTopicComponents {
-      override lazy val readSide: ReadSideTestDriver = new ReadSideTestDriver
+      override def getSimulatorEntityRef: UUID => EntityRef[Command] = _ => simulatorEntityRefTest
     }
   }
 
-  lazy val client = server.serviceClient.implement[SimulationService]
+  lazy val testKit = ActorTestKit()
 
-  lazy val source = client.simulationOrderTopic.subscribe.atMostOnceSource
+  lazy val simulatorEntityRefProbe = testKit.createTestProbe[Command]()
+
+  lazy val simulatorEntityRefTest = TestEntityRef(SimulatorEntity.TypeKey, "----", simulatorEntityRefProbe.ref)
+
+  lazy val client = server.serviceClient.implement[SimulationService]
 
   //noinspection TypeAnnotation
   def application = server.application
 
-  def feed(event: SimulationEvent): Future[Done] = {
-    server.application.readSide.feed(UUID.randomUUID().toString, event, NoOffset)
-  }
+  implicit def materializer = server.materializer
 
-  implicit def materializer: Materializer = server.materializer
-
-  implicit def system: ActorSystem = server.actorSystem
+  implicit def system = server.actorSystem
 
   override protected def afterAll(): Unit = {
     super.afterAll()
     server.stop()
+    testKit.shutdownTestKit()
+  }
+
+  override protected def beforeAll(): Unit = {
+    Map(
+      "STARS_WEBAPI_TIMEOUT" -> "5s",
+      "DB_DEFAULT_PASSWORD" -> "PASSWORD",
+      "DB_DEFAULT_URL" -> "URL",
+      "DB_DEFAULT_USERNAME" -> "USER"
+    ).foreach {
+      case (k, v) => System.setProperty(k, v)
+    }
+
+    super.beforeAll()
   }
 }

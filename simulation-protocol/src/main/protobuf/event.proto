@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "protocol.proto";
+
+package stars.simulation.protocol;
+
+message SimulationEvent {
+
+  oneof sealed_value {
+    SimulationAdded simulation_accepted = 1;
+    SimulationStarted simulation_started = 2;
+  }
+}
+
+message SimulationAdded {
+  string id = 1;
+  Description description = 2;
+}
+
+message SimulationStarted {
+  string id = 1;
+}
