@@ -7,7 +7,7 @@ object SimulationFixture {
   def newDescription(id: String = newRandomId()): Description = {
     Description(
       name = s"Galileo $id",
-      email = "galileo-$id@science.org",
+      email = s"galileo-$id@science.org",
       stars = 10,
       minStarWeight = 0.1,
       maxStarWeight = 10,
