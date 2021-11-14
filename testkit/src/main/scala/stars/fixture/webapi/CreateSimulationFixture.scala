@@ -20,9 +20,3 @@ object CreateSimulationFixture {
     )
   }
 }
-
-
-trait SingleCreateSimulationFixture {
-
-  val createSimulation: CreateSimulation = CreateSimulationFixture.newCreateSimulation()
-}
