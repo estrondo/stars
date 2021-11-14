@@ -15,7 +15,7 @@ class SimulatorEntitySpec extends AbstractSimulatorEntitySpec {
         .runCommand(Command.New(newSimulationCommand, _))
         .reply
 
-      response.simulation should be(ToSimulation(newSimulationCommand))
+      response.simulation should be(ToSimulation.fromNewSimulation(newSimulationCommand))
       response.error shouldBe empty
     }
 

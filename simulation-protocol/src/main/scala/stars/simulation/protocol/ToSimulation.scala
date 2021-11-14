@@ -4,7 +4,7 @@ import io.scalaland.chimney.dsl._
 
 object ToSimulation {
 
-  def apply(input: NewSimulation): Simulation = {
+  def fromNewSimulation(input: NewSimulation): Simulation = {
     input.transformInto[Simulation]
   }
 }

@@ -57,7 +57,9 @@ class SimulatorEntity(id: String, ref: ActorRef[SimulationCommand]) extends Stri
         newSimulation(command, replyTo)
       else {
         logger.warn("Unexpected new simulation {}!", command.id)
-        val message = Command.NewResponse(ToSimulation(command), Some(new IllegalArgumentException("Illegal ID!")))
+        val message = Command.NewResponse(ToSimulation.fromNewSimulation(command),
+          Some(new IllegalArgumentException("Illegal ID!")))
+
         Effect.reply(replyTo)(message)
       }
 
@@ -73,7 +75,7 @@ class SimulatorEntity(id: String, ref: ActorRef[SimulationCommand]) extends Stri
   private def dispatch(command: NewSimulation): State = {
     logger.debug("Sending simulation {}.", command.id)
     ref ! command
-    State.Sent(ToSimulation(command))
+    State.Sent(ToSimulation.fromNewSimulation(command))
   }
 
   private def newSimulation(command: NewSimulation, replyTo: ActorRef[Command.NewResponse]): Effect = {

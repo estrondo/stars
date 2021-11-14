@@ -7,7 +7,6 @@ import com.lightbend.lagom.scaladsl.server.{LagomServer, LagomServerComponents}
 import com.softwaremill.macwire.wire
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
-import slick.jdbc.JdbcBackend
 import stars.webapi.SimulationService
 import stars.webapi.impl.SimulationServiceImpl
 import stars.webapi.impl.simulator.Command
