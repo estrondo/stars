@@ -1,7 +1,7 @@
 package stars.webapi.impl.simulator
 
+import stars.fixture.simulation.SimulationFixture
 import stars.simulation.protocol.{NewSimulation, Simulation, ToSimulation}
-import stars.webapi.impl.fixture.SimulationFixture
 
 class SimulatorEntitySpec extends AbstractSimulatorEntitySpec {
 
@@ -15,7 +15,7 @@ class SimulatorEntitySpec extends AbstractSimulatorEntitySpec {
         .runCommand(Command.New(newSimulationCommand, _))
         .reply
 
-      response.simulation should be(ToSimulation(newSimulationCommand))
+      response.simulation should be(ToSimulation.fromNewSimulation(newSimulationCommand))
       response.error shouldBe empty
     }
 

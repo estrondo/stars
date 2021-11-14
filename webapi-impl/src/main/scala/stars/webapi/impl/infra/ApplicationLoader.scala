@@ -4,6 +4,7 @@ import com.lightbend.lagom.scaladsl.api.{Descriptor, ServiceLocator}
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.server.{LagomApplication, LagomApplicationContext, LagomApplicationLoader}
 import stars.webapi.SimulationService
+import stars.webapi.impl.database.Migration
 
 class ApplicationLoader extends LagomApplicationLoader {
 
@@ -11,7 +12,11 @@ class ApplicationLoader extends LagomApplicationLoader {
 
   override def load(context: LagomApplicationContext): LagomApplication = {
     new Application(context) {
+
+      Migration(db)
+
       override def serviceLocator: ServiceLocator = ServiceLocator.NoServiceLocator
+
     }
   }
 

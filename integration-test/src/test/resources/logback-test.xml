@@ -6,9 +6,11 @@
         </encoder>
     </appender>
 
-    <root level="${LOGGER_DEFAULT_LEVEL:-debug}">
-        <appender-ref ref="STDOUT" />
+    <root level="trace">
+        <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="stars" level="${LOGGER_STARS_LEVEL:-info}" />
+    <logger name="com.github.dockerjava" level="off"/>
+    <logger name="org.testcontainers" level="warn"/>
+    <logger name="stars" level="debug"/>
 </configuration>

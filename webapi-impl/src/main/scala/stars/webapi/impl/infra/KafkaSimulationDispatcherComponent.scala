@@ -6,29 +6,33 @@ import akka.kafka.scaladsl.{DiscoverySupport, Producer}
 import akka.stream.OverflowStrategy
 import akka.stream.typed.scaladsl.ActorSource
 import com.lightbend.lagom.scaladsl.server.LagomServerComponents
+import com.typesafe.scalalogging.StrictLogging
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.{ByteArraySerializer, StringSerializer}
 import scalapb.GeneratedMessage
 import stars.simulation.protocol.{NewSimulation, SimulationCommand, StartSimulation}
+import stars.webapi.impl.infra.KafkaSimulationHelper.newSimulationCommandConverter
 
+object KafkaSimulationHelper extends StrictLogging {
 
-trait SimulationDispatcherComponentRequired {
-
-  def simulationDispatcher: ActorRef[SimulationCommand]
-}
-
-trait KafkaSimulationDispatcherComponent extends SimulationDispatcherComponentRequired {
-  this: LagomServerComponents =>
-
-  lazy val toProducerRecord: SimulationCommand => ProducerRecord[String, Array[Byte]] = { command =>
+  def newSimulationCommandConverter(): SimulationCommand => ProducerRecord[String, Array[Byte]] = { command =>
     val id = command match { // Ok, it's ugly.
-      case NewSimulation(id, _, _) => id
-      case StartSimulation(id, _) => id
+      case NewSimulation(id, _, _) =>
+        logger.debug("Converting NewSimulation({}).", id)
+        id
+      case StartSimulation(id, _) =>
+        logger.debug("Converting StartSimulation({}).", id)
+        id
     }
 
     val bytes = command.asInstanceOf[GeneratedMessage].toByteArray
     new ProducerRecord(id + "-" + System.currentTimeMillis(), bytes)
   }
+}
+
+
+trait KafkaSimulationDispatcherComponent extends SimulationDispatcherComponentRequired {
+  this: LagomServerComponents =>
 
   lazy val simulationDispatcher: ActorRef[SimulationCommand] = {
     val (actor, source) = ActorSource
@@ -50,7 +54,7 @@ trait KafkaSimulationDispatcherComponent extends SimulationDispatcherComponentRe
     ).withEnrichAsync(DiscoverySupport.producerBootstrapServers(config))
 
     val sink = Producer.plainSink(settings)
-    source.map(toProducerRecord).runWith(sink)(materializer)
+    source.map(newSimulationCommandConverter()).runWith(sink)(materializer)
     actor
   }
 }

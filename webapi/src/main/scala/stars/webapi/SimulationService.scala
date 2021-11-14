@@ -8,7 +8,7 @@ trait SimulationService extends Service {
 
   override def descriptor: Descriptor = {
     import Service._
-    named("/simulation")
+    named("stars-simulation-webapi")
       .withCalls(
         restCall(Method.POST, "/simulate", simulate)
       )

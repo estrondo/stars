@@ -1,5 +1,6 @@
-package stars.webapi.impl.fixture
+package stars.fixture.simulation
 
+import stars.fixture.newRandomId
 import stars.simulation.protocol.{BlackHole, Description, NewSimulation}
 
 object SimulationFixture {
@@ -22,4 +23,3 @@ object SimulationFixture {
     )
   }
 }
-
