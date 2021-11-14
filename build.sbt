@@ -12,16 +12,29 @@ ThisBuild / scalacOptions ++= Seq(
 
 ThisBuild / Test / fork := true
 
+
 val AkkaVersion = "2.6.14" //PlayVersion.akkaVersion
 val AkkaKafkaVersion = "2.1.0"
 val JacksonVersion = "2.11.4"
 
-val Flyway = "org.flywaydb" % "flyway-core" % "8.0.2"
-val ScalaTest = "org.scalatest" %% "scalatest" % "3.2.10" % "test"
-val Postgres = "org.postgresql" % "postgresql" % "42.3.1"
-//val SprayJSON = "io.spray" %% "spray-json" % "1.3.6"
-val Macwire = "com.softwaremill.macwire" %% "macros" % "2.5.0" % "provided"
-val ScalaMock = "org.scalamock" %% "scalamock" % "5.1.0" % Test
+val Flyway = Seq(
+  "org.flywaydb" % "flyway-core" % "8.0.2"
+)
+val ScalaTest = Seq(
+  "org.scalatest" %% "scalatest" % "3.2.10" % Test
+)
+
+val Postgres = Seq(
+  "org.postgresql" % "postgresql" % "42.3.1"
+)
+
+val Macwire = Seq(
+  "com.softwaremill.macwire" %% "macros" % "2.5.0" % Provided
+)
+
+val ScalaMock = Seq(
+  "org.scalamock" %% "scalamock" % "5.1.0" % Test
+)
 
 val Logging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
@@ -57,9 +70,10 @@ val AkkaSharding = Seq(
   "com.typesafe.akka" %% "akka-persistence-testkit" % AkkaVersion % Test
 )
 
-val Testcontainers = Seq(
-  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.39.10" % "test",
-  "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.39.10" % "test"
+val ScalaTestcontainers = Seq(
+  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.39.10" % Test,
+  "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.39.10" % Test,
+  "com.dimafeng" %% "testcontainers-scala-kafka" % "0.39.10" % Test
 )
 
 val AlpakkaKafka = Seq(
@@ -76,12 +90,37 @@ val Chimney = Seq(
   "io.scalaland" %% "chimney" % "0.6.1"
 )
 
-
 lazy val root = (project in file("."))
   .settings(
     name := "stars-root"
+  ).aggregate(`simulator`, `webapi`, `webapi-impl`, `integration-test`)
+
+lazy val `test-kit` = (project in file("testkit"))
+  .settings(
+    name := "testki"
   )
-  .aggregate(`simulator`, `webapi`, `webapi-impl`)
+  .dependsOn(`simulation-protocol`, `webapi`)
+
+lazy val `integration-test` = (project in file("integration-test"))
+  .settings(
+    name := "integration-test",
+    libraryDependencies ++= Seq(
+      lagomScaladslTestKit,
+      "com.softwaremill.sttp.client3" %% "core" % "3.3.16" % Test,
+      "com.softwaremill.sttp.client3" %% "play-json" % "3.3.16" % Test
+    ) ++ Seq(
+      ScalaTest,
+      ScalaTestcontainers,
+      AlpakkaKafka,
+      Logging
+    ).flatten
+  )
+  .dependsOn(`test-kit`, `simulation-protocol`, `webapi`)
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    buildInfoKeys := Seq(version),
+    buildInfoPackage := "stars"
+  )
 
 lazy val `bhtree-engine` = (project in file("bhtree-engine"))
   .settings(
@@ -108,7 +147,6 @@ lazy val `simulation-protocol` = (project in file("simulation-protocol"))
       ) -> (Compile / sourceManaged).value / "scalapb"
     ),
     libraryDependencies ++= Seq(
-    ) ++ Seq(
       Chimney
     ).flatten
   )
@@ -118,8 +156,7 @@ lazy val `simulator` = (project in file("simulator"))
     name := "stars-simulator",
     libraryDependencies ++= Seq(
       ScalaTest,
-      ScalaMock
-    ) ++ Set(
+      ScalaMock,
       AkkaActors,
       AkkaStreams,
       AkkaSharding,
@@ -132,7 +169,8 @@ lazy val `simulator` = (project in file("simulator"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(
-    dockerBaseImage := "openjdk:11-jdk-slim-buster"
+    dockerBaseImage := "openjdk:11-jdk-slim-buster",
+    dockerEnvVars ++= SimulatorInfo.EnvVars
   )
   .settings()
 
@@ -149,26 +187,32 @@ lazy val `webapi-impl` = (project in file("webapi-impl"))
   .settings(
     name := "stars-webapi-impl",
     libraryDependencies ++= Seq(
-      Macwire,
       lagomScaladslKafkaBroker,
       lagomScaladslPersistenceJdbc,
       lagomScaladslTestKit,
-      lagomScaladslAkkaDiscovery,
+      lagomScaladslAkkaDiscovery
+    ) ++ Seq(
+      Macwire,
       Postgres,
       Flyway,
-      ScalaTest
-    ) ++ Set(
+      ScalaTest,
       AkkaPersistence,
       AlpakkaKafka,
       Logging,
-      Testcontainers,
+      ScalaTestcontainers,
       Chimney,
       TypesafeConfig
     ).flatten
   )
-  .dependsOn(`webapi`, `simulation-protocol`)
+  .dependsOn(`webapi`, `simulation-protocol`, `test-kit`)
   .enablePlugins(LagomScala)
   .settings(
-    lagomCassandraEnabled := false
+    lagomCassandraEnabled := false,
+    dockerBaseImage := "openjdk:11-jdk-slim-buster",
+    Docker / packageName  := "stars-webapi",
+    dockerExposedPorts := Seq(9000),
+    dockerExposedVolumes := Seq(
+      "/opt/docker"
+    )
   )
   .settings(lagomForkedTestSettings: _*)

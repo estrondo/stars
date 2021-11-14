@@ -10,12 +10,10 @@ package object protocol {
 
   type Pc = Double
 
-  implicit val blackHoleOrderFormat: OFormat[BlackHole] = Json.format[BlackHole]
+  implicit val blackHoleFormat: OFormat[BlackHole] = Json.format[BlackHole]
 
-  implicit val simulationOrderFormat: OFormat[CreateSimulation] = Json.format[CreateSimulation]
+  implicit val createSimulationFormat: OFormat[CreateSimulation] = Json.format[CreateSimulation]
 
-  implicit val simulationOrderResponseFormat: OFormat[CreateSimulationResponse] = Json.format[CreateSimulationResponse]
-
-  implicit val simulationOrderIDFormat: OFormat[SimulationOrder] = Json.format[SimulationOrder]
+  implicit val createSimulationResponseFormat: OFormat[CreateSimulationResponse] = Json.format[CreateSimulationResponse]
 
 }

@@ -6,9 +6,28 @@
         </encoder>
     </appender>
 
-    <root level="warn">
+    <root level="${LOGGER_DEFAULT_LEVEL:-warn}">
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="stars" level="debug" />
+    <logger name="stars" level="${LOGGER_STARS_LEVEL:-info}" />
+
+    <logger name="akka.serialization" level="${LOGGER_AKKA_SERIALIZATION_LEVEL:-warn}"/>
+    <logger name="akka.http" level="${LOGGER_AKKA_HTTP_LEVEL:-warn}"/>
+    <logger name="akka.cluster" level="${LOGGER_AKKA_CLUSTER_LEVEL:-warn}"/>
+    <logger name="akka.management" level="${LOGGER_AKKA_MANAGEMENT_LEVEL:-info}"/>
+    <logger name="akka.event" level="${LOGGER_AKKA_EVENT_LEVEL:-warn}"/>
+    <logger name="akka.remote" level="${LOGGER_AKKA_REMOTE_LEVEL:-warn}"/>
+    <logger name="akka.discovery" level="${LOGGER_AKKA_DISCOVERY_LEVEL:-warn}"/>
+    <logger name="akka.actor" level="${LOGGER_AKKA_ACTOR_LEVEL:-warn}"/>
+    <logger name="akka.io" level="${LOGGER_AKKA_IO_LEVEL:-warn}"/>
+    <logger name="akka.persistence" level="${LOGGER_AKKA_PERSISTENCE_LEVEL:-warn}"/>
+    <logger name="com.lightbend.lagom" level="${LOGGER_LIGHTBEND_LAGOM_LEVEL:-warn}" />
+    <logger name="jdk.event.security" level="${LOGGER_JDK_SECURITY_LEVEL:-warn}"/>
+    <logger name="slick" level="${LOGGER_SLICK_LEVEL:-warn}"/>
+    <logger name="slick.jdbc" level="${LOGGER_SLICK_JDBC_LEVEL:-warn}"/>
+    <logger name="com.zaxxer.hikari" level="${LOGGER_HIKARI_LEVEL:-warn}"/>
+    <logger name="org.postgresql" level="${LOGGER_POSTGRESQL_LEVEL:-warn}"/>
+    <logger name="org.flywaydb" level="${LOGGER_FLYWAYDB_LEVEL:-warn}"/>
+    <logger name="javax.management" level="${LOGGER_JAVAX_MANAGEMENT_LEVEL:-warn}"/>
 </configuration>
