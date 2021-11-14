@@ -23,13 +23,13 @@ object SimulatorEntity {
 
   val TypeKey: EntityTypeKey[Command] = EntityTypeKey[Command]("SimulatorEntity")
 
-  def create(ctx: EntityContext[Command], ref: ActorRef[SimulationCommand]): Behavior[Command] = {
-    create(ctx.entityId, ref)
+  def create(ctx: EntityContext[Command], dispatcher: ActorRef[SimulationCommand]): Behavior[Command] = {
+    create(ctx.entityId, dispatcher)
       .withTagger(AkkaTaggerAdapter.fromLagom(ctx, Event.Tag))
   }
 
-  def create(id: String, ref: ActorRef[SimulationCommand]): EventSourcedBehavior[Command, Event, State] = {
-    val entity = new SimulatorEntity(id, ref)
+  def create(id: String, dispatcher: ActorRef[SimulationCommand]): EventSourcedBehavior[Command, Event, State] = {
+    val entity = new SimulatorEntity(id, dispatcher)
 
     EventSourcedBehavior
       .apply[Command, Event, State](
@@ -47,7 +47,7 @@ object SimulatorEntity {
   }
 }
 
-class SimulatorEntity(id: String, ref: ActorRef[SimulationCommand]) extends StrictLogging {
+class SimulatorEntity(id: String, dispatcher: ActorRef[SimulationCommand]) extends StrictLogging {
 
   logger.debug("Starting for simulation {}.", id)
 
@@ -74,7 +74,7 @@ class SimulatorEntity(id: String, ref: ActorRef[SimulationCommand]) extends Stri
 
   private def dispatch(command: NewSimulation): State = {
     logger.debug("Sending simulation {}.", command.id)
-    ref ! command
+    dispatcher ! command
     State.Sent(ToSimulation.fromNewSimulation(command))
   }
 
