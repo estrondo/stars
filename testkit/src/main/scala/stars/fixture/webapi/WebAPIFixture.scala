@@ -1,6 +1,7 @@
-package stars.webapi.impl.fixture
+package stars.fixture.webapi
 
-import stars.webapi.protocol.{BlackHole, CreateSimulation, SimulationOrder}
+import stars.fixture.newRandomId
+import stars.webapi.protocol.{BlackHole, CreateSimulation}
 
 
 object CreateSimulationFixture {
@@ -21,13 +22,7 @@ object CreateSimulationFixture {
 }
 
 
-
 trait SingleCreateSimulationFixture {
 
   val createSimulation: CreateSimulation = CreateSimulationFixture.newCreateSimulation()
-}
-
-trait SingleSimulationOrder extends SingleCreateSimulationFixture {
-
-  val simulationOrder: SimulationOrder = SimulationOrder(createSimulation)
 }

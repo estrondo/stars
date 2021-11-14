@@ -48,14 +48,16 @@ abstract class AbstractServiceSpec extends AsyncSpec {
   }
 
   override protected def beforeAll(): Unit = {
-    Map(
+    addSystemProperty(
       "STARS_WEBAPI_TIMEOUT" -> "5s",
       "DB_DEFAULT_PASSWORD" -> "PASSWORD",
       "DB_DEFAULT_URL" -> "URL",
-      "DB_DEFAULT_USERNAME" -> "USER"
-    ).foreach {
-      case (k, v) => System.setProperty(k, v)
-    }
+      "DB_DEFAULT_USERNAME" -> "USER",
+      "KAFKA_CONSUMER_PORT" -> "9090",
+      "KAFKA_PRODUCER_PORT" -> "9090",
+      "KAFKA_CONSUMER_HOST" -> "localhost",
+      "KAFKA_PRODUCER_HOST" -> "localhost"
+    )
 
     super.beforeAll()
   }
