@@ -9,16 +9,16 @@ import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import com.typesafe.config.Config
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
+import org.apache.kafka.common.serialization.{ByteArrayDeserializer, ByteArraySerializer, StringDeserializer, StringSerializer}
 
 import scala.concurrent.Future
 
 object KafkaHelper {
 
-  def createPlainSink[T](config: Config)(adapter: T => ProducerRecord[String, String])
+  def createPlainSink[T](config: Config)(adapter: T => ProducerRecord[String, Array[Byte]])
     (implicit system: ClassicActorSystemProvider): Sink[T, Future[Done]] = {
 
-    val settings = ProducerSettings(config, new StringSerializer, new StringSerializer)
+    val settings = ProducerSettings(config, new StringSerializer, new ByteArraySerializer)
       .withEnrichAsync(DiscoverySupport.producerBootstrapServers(config))
 
     Flow
@@ -26,17 +26,18 @@ object KafkaHelper {
       .toMat(Producer.plainSink(settings))(Keep.right)
   }
 
-  def createPlainSource(
+  def createPlainSource[T](
     topics: Set[String],
     groupId: String,
     config: Config
-  )(implicit system: ClassicActorSystemProvider): Source[ConsumerRecord[String, String], Control] = {
+  )(adapter: ConsumerRecord[String, Array[Byte]] => T)(implicit system: ClassicActorSystemProvider): Source[T, Control] = {
 
-    val settings = ConsumerSettings(config, new StringDeserializer, new StringDeserializer)
+    val settings = ConsumerSettings(config, new StringDeserializer, new ByteArrayDeserializer)
       .withEnrichAsync(DiscoverySupport.consumerBootstrapServers(config))
       .withGroupId(groupId)
 
     Consumer
       .plainSource(settings, Subscriptions.topics(topics))
+      .map(adapter)
   }
 }

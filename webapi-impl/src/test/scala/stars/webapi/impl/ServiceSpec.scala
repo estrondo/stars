@@ -1,8 +1,8 @@
 package stars.webapi.impl
 
 import com.lightbend.lagom.scaladsl.api.transport.TransportException
-import stars.fixture.webapi.CreateSimulationFixture
 import stars.simulation.protocol.ToSimulation
+import stars.testkit.fixture.webapi.CreateSimulationFixture
 import stars.webapi.impl.simulator.Command
 
 import scala.util.Failure

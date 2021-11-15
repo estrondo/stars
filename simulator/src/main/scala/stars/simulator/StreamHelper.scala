@@ -8,18 +8,6 @@ import akka.{Done, NotUsed}
 
 object StreamHelper {
 
-  def createActorSource[T]()(implicit materializer: Materializer): (ActorRef[T], Source[T, NotUsed]) = {
-    ActorSource
-      .actorRef[T](
-        completionMatcher = PartialFunction.empty,
-        failureMatcher = PartialFunction.empty,
-        bufferSize = 25,
-        overflowStrategy = OverflowStrategy.backpressure
-      )
-      .preMaterialize()
-  }
-
-
   def createSinkWithoutReplyTo[T, M](ref: ActorRef[M], initial: M, onComplete: M)
     (messageAdapter: T => M, onFailureMessage: Throwable => M): Sink[T, NotUsed] = {
 
@@ -36,5 +24,16 @@ object StreamHelper {
       onCompleteMessage = onComplete,
       onFailureMessage = onFailureMessage
     )
+  }
+
+  def createSourceActor[T]()(implicit materializer: Materializer): (ActorRef[T], Source[T, NotUsed]) = {
+    ActorSource
+      .actorRef[T](
+        completionMatcher = PartialFunction.empty,
+        failureMatcher = PartialFunction.empty,
+        bufferSize = 25,
+        overflowStrategy = OverflowStrategy.backpressure
+      )
+      .preMaterialize()
   }
 }

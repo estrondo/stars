@@ -1,7 +1,7 @@
 package stars.webapi.impl.simulator
 
-import stars.fixture.simulation.SimulationFixture
 import stars.simulation.protocol.{NewSimulation, Simulation, ToSimulation}
+import stars.testkit.fixture.simulation.SimulationFixture
 
 class SimulatorEntitySpec extends AbstractSimulatorEntitySpec {
 

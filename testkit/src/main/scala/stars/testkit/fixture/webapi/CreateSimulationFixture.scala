@@ -1,8 +1,7 @@
-package stars.fixture.webapi
+package stars.testkit.fixture.webapi
 
-import stars.fixture.newRandomId
+import stars.textkit.newRandomId
 import stars.webapi.protocol.{BlackHole, CreateSimulation}
-
 
 object CreateSimulationFixture {
 
@@ -13,16 +12,10 @@ object CreateSimulationFixture {
       email = s"albert-$id@einstein.org",
       segments = Nil,
       stars = Some(10),
-      minStarWeight = Some(0.1),
-      maxStarWeight = Some(10),
-      weightDistribution = Some(0),
+      minStarMass = Some(0.1),
+      maxStarMass = Some(10),
+      massDistribution = Some(0),
       blackHoles = Seq(BlackHole(100, 0, 0, 0))
     )
   }
-}
-
-
-trait SingleCreateSimulationFixture {
-
-  val createSimulation: CreateSimulation = CreateSimulationFixture.newCreateSimulation()
 }
