@@ -30,9 +30,14 @@ trait Spec
     testKit.shutdownTestKit()
   }
 
+
+  override protected def beforeEach(): Unit = {
+    super.beforeEach()
+  }
+
   protected def config: Config = testKit.config
 
   protected def createConfig(): Config = ConfigFactory.load()
 
-  protected def system: ActorSystem[_] = testKit.internalSystem
+  implicit protected def system: ActorSystem[_] = testKit.internalSystem
 }

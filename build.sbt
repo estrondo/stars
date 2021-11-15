@@ -56,7 +56,8 @@ val AkkaPersistence = Seq(
 
 val AkkaActors = Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-  "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test
+  "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test,
+  "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion
 )
 
 val AkkaStreams = Seq(

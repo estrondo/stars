@@ -30,7 +30,7 @@ object Simulator {
 
   val Effect = scaladsl.Effect
 
-  def create(id: String, configuration: Configuration): Behavior[SimulationCommand] =
+  def apply(id: String, configuration: Configuration): Behavior[SimulationCommand] =
     Behaviors.setup { context =>
       val simulator = new Simulator(id, context, configuration)
       EventSourcedBehavior[SimulationCommand, Event, State](
@@ -38,14 +38,14 @@ object Simulator {
         emptyState = State.Empty(id),
         commandHandler = simulator.commandHandler,
         eventHandler = simulator.eventHandler
-      )
+      ).snapshotWhen(simulator.snapshotWhen)
     }
 
   def createEntity(config: Config): Entity[SimulationCommand, ShardingEnvelope[SimulationCommand]] = {
-    val configuration = new Configuration(validator = Validator(config.getConfig("validator")))
+    val configuration = new Configuration(Validator(config.getConfig("validator")))
 
     Entity(TypeKey) { entityContext =>
-      create(entityContext.entityId, configuration)
+      apply(entityContext.entityId, configuration)
     }
   }
 }
@@ -76,6 +76,8 @@ class Simulator(
       logger.warn("Ignoring event: {}.", ignoring)
       state
   }
+
+  val snapshotWhen: (State, Event, Long) => Boolean = (_, _, _) => false
 
   private def newSimulation(command: NewSimulation): Effect = command.description match {
     case Some(description) =>

@@ -3,8 +3,9 @@ package stars.simulator
 import akka.Done
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorSystem, Behavior}
+import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
-import stars.simulator.entity.SimulatorStarter
+import stars.simulator.entity.SimulatorShard
 
 object MainActor extends App with StrictLogging {
 
@@ -19,7 +20,9 @@ class MainActor(context: ActorContext[Done]) extends StrictLogging {
 
   logger.debug("Starting.")
 
-  SimulatorStarter(context)
+  private implicit val materializer = Materializer(context)
+
+  SimulatorShard(context.system)
 
 
   private val behavior: Behavior[Done] = Behaviors.empty

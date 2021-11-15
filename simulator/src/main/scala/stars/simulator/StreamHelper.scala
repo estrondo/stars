@@ -1,6 +1,7 @@
 package stars.simulator
 
 import akka.actor.typed.ActorRef
+import akka.cluster.sharding.typed.ShardingEnvelope
 import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.typed.scaladsl.{ActorSink, ActorSource}
 import akka.stream.{Materializer, OverflowStrategy}
@@ -35,5 +36,17 @@ object StreamHelper {
         overflowStrategy = OverflowStrategy.backpressure
       )
       .preMaterialize()
+  }
+
+  def toShardRegion[T, Mat](source: Source[T, Mat], region: ActorRef[ShardingEnvelope[T]])
+    (extractId: T => Option[String])(implicit materializer: Materializer): Mat = {
+
+    source
+      .to(Sink.foreach { message =>
+        val option = extractId(message)
+        if (option.isDefined)
+          region ! ShardingEnvelope(option.get, message)
+      })
+      .run()
   }
 }
