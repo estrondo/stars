@@ -6,6 +6,7 @@ import akka.cluster.sharding.typed.testkit.scaladsl.TestEntityRef
 import com.lightbend.lagom.scaladsl.server.{LagomApplication, LocalServiceLocator}
 import com.lightbend.lagom.scaladsl.testkit.{ServiceTest, TestTopicComponents}
 import play.api.libs.ws.ahc.AhcWSComponents
+import stars.textkit.addSystemProperty
 import stars.webapi.SimulationService
 import stars.webapi.impl.infra.{SimulatorComponentRequired, WebAPIComponent}
 import stars.webapi.impl.simulator.{Command, SimulatorEntity}

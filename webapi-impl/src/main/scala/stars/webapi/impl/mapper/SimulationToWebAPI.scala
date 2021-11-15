@@ -14,9 +14,9 @@ object SimulationToWebAPI {
   def createSimulation(input: Description): CreateSimulation = {
     input
       .into[CreateSimulation]
-      .withFieldComputed(_.minStarWeight, x => Some(x.minStarWeight))
-      .withFieldComputed(_.maxStarWeight, x => Some(x.maxStarWeight))
-      .withFieldComputed(_.weightDistribution, x => Some(x.weightDistribution))
+      .withFieldComputed(_.minStarMass, x => Some(x.minStarMass))
+      .withFieldComputed(_.maxStarMass, x => Some(x.maxStarMass))
+      .withFieldComputed(_.massDistribution, x => Some(x.massDistribution))
       .withFieldComputed(_.segments, _.segments.map(x => x.points))
       .transform
   }

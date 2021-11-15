@@ -1,6 +1,6 @@
 package stars.it
 
-import stars.fixture.webapi.CreateSimulationFixture
+import stars.testkit.fixture.webapi.CreateSimulationFixture
 import stars.webapi.protocol._
 import sttp.client3._
 import sttp.client3.playJson._

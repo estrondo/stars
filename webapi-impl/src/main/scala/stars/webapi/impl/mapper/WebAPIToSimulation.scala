@@ -10,9 +10,9 @@ object WebAPIToSimulation {
     val description = input
       .into[Description]
       .withFieldComputed(_.stars, _.stars.getOrElse(0))
-      .withFieldComputed(_.minStarWeight, _.minStarWeight.getOrElse(0D))
-      .withFieldComputed(_.maxStarWeight, _.maxStarWeight.getOrElse(0D))
-      .withFieldComputed(_.weightDistribution, _.weightDistribution.getOrElse(0D))
+      .withFieldComputed(_.minStarMass, _.minStarMass.getOrElse(0D))
+      .withFieldComputed(_.maxStarMass, _.maxStarMass.getOrElse(0D))
+      .withFieldComputed(_.massDistribution, _.massDistribution.getOrElse(0D))
       .transform
 
     NewSimulation(id, Some(description))
