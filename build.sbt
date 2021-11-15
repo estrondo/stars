@@ -97,7 +97,11 @@ lazy val root = (project in file("."))
 
 lazy val `test-kit` = (project in file("testkit"))
   .settings(
-    name := "testki"
+    name := "testki",
+    libraryDependencies ++= Seq(
+      ScalaTestcontainers,
+      ScalaTest
+    ).flatten.map(removeConfiguration)
   )
   .dependsOn(`simulation-protocol`, `webapi`)
 
@@ -115,7 +119,7 @@ lazy val `integration-test` = (project in file("integration-test"))
       Logging
     ).flatten
   )
-  .dependsOn(`test-kit`, `simulation-protocol`, `webapi`)
+  .dependsOn(`test-kit` % Test, `simulation-protocol`, `webapi`)
   .enablePlugins(BuildInfoPlugin)
   .settings(
     buildInfoKeys := Seq(version),
@@ -162,10 +166,11 @@ lazy val `simulator` = (project in file("simulator"))
       AkkaSharding,
       Logging,
       AlpakkaKafka,
-      TypesafeConfig
+      TypesafeConfig,
+      Chimney
     ).flatten
   )
-  .dependsOn(`bhtree-engine`, `simulation-engine`, `simulation-protocol`)
+  .dependsOn(`bhtree-engine`, `simulation-engine`, `simulation-protocol`, `test-kit` % Test)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(
@@ -204,15 +209,19 @@ lazy val `webapi-impl` = (project in file("webapi-impl"))
       TypesafeConfig
     ).flatten
   )
-  .dependsOn(`webapi`, `simulation-protocol`, `test-kit`)
+  .dependsOn(`webapi`, `simulation-protocol`, `test-kit` % Test)
   .enablePlugins(LagomScala)
   .settings(
     lagomCassandraEnabled := false,
     dockerBaseImage := "openjdk:11-jdk-slim-buster",
-    Docker / packageName  := "stars-webapi",
+    Docker / packageName := "stars-webapi",
     dockerExposedPorts := Seq(9000),
     dockerExposedVolumes := Seq(
       "/opt/docker"
     )
   )
   .settings(lagomForkedTestSettings: _*)
+
+def removeConfiguration(module: ModuleID): ModuleID = {
+  module.withConfigurations(None)
+}

@@ -11,15 +11,35 @@ message Simulation {
   Description description = 2;
 }
 
+message Vector3D {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+// based on https://javadoc.lwjgl.org/org/lwjgl/assimp/AICamera.html
+message Viewport {
+  string name = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+  Vector3D up = 5;
+  Vector3D look_at = 6;
+  double hfov = 7;
+  double near = 8;
+  double far = 9;
+}
+
 message Description {
   string name = 1;
   string email = 2;
   int32 stars = 3;
-  double min_star_weight = 4;
-  double max_star_weight = 5;
-  double weight_distribution = 6; // [-1, 1] ???
+  double min_star_mass = 4;
+  double max_star_mass = 5;
+  double mass_distribution = 6; // [-1, 1] ???
   repeated BlackHole black_holes = 7;
   repeated Segment segments = 8;
+  repeated Viewport viewports = 9;
 }
 
 message BlackHole {

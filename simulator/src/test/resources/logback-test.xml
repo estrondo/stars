@@ -11,4 +11,6 @@
     </root>
 
     <logger name="stars" level="debug" />
+    <logger name="com.github.dockerjava" level="warn"/>
+    <logger name="org.testcontainers" level="warn"/>
 </configuration>

@@ -6,9 +6,9 @@ import com.typesafe.config.Config
 
 package object simulator {
 
-  implicit class ActorContextOps(context: ActorContext[_]) extends ActorSystemOps(context.system)
+  implicit class StarsActorContext(context: ActorContext[_]) extends StarsActorSystem(context.system)
 
-  implicit class ActorSystemOps(system: ActorSystem[_]) {
+  implicit class StarsActorSystem(system: ActorSystem[_]) {
 
     def getConfig(path: String): Config = system.settings.config.getConfig(path)
 
