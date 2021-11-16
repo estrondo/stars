@@ -4,7 +4,7 @@ import akka.persistence.testkit.scaladsl.EventSourcedBehaviorTestKit
 import com.typesafe.config.Config
 import stars.textkit.addSystemProperty
 
-trait AbstractSimulatorSpecWithoutKafka extends Spec {
+trait SimulatorWithoutKafkaSpecLike extends Spec {
 
 
   override protected def beforeAll(): Unit = {
@@ -12,7 +12,11 @@ trait AbstractSimulatorSpecWithoutKafka extends Spec {
       "KAFKA_CONSUMER_PORT" -> "port",
       "KAFKA_PRODUCER_PORT" -> "port",
       "KAFKA_CONSUMER_HOST" -> "localhost",
-      "KAFKA_PRODUCER_HOST" -> "localhost"
+      "KAFKA_PRODUCER_HOST" -> "localhost",
+      "STAR_SIMULATOR_ENTITY_VALIDATOR_MIN_STAR_MASS" -> "0.1",
+      "STAR_SIMULATOR_ENTITY_VALIDATOR_MAX_STAR_MASS" -> "10",
+      "STAR_SIMULATOR_ENTITY_VALIDATOR_MAX_STARS" -> "1000",
+      "STAR_SIMULATOR_ENTITY_VALIDATOR_MAX_BLACK_HOLE_MASS" -> "50"
     )
     super.beforeAll()
   }

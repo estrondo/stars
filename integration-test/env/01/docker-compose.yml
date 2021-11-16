@@ -28,7 +28,14 @@ services:
     environment:
       LOGGER_STARS_LEVEL: debug
       LOGGER_DEFAULT_LEVEL: debug
-      AKKA_DISCOVERY_METHOD: akka-dns
+      LOGGER_APACHE_KAFKA_LEVEL: debug
+      KAFKA_SERVICE_NAME: kafka
+      KAFKA_PRODUCER_HOST: kafka
+      KAFKA_PRODUCER_PORT: 9092
+      KAFKA_CONSUMER_HOST: kafka
+      KAFKA_CONSUMER_PORT: 9092
+    depends_on:
+      - kafka
   postgres:
     image: postgres:11-alpine
     ports:

@@ -7,8 +7,19 @@
     </appender>
 
     <root level="${LOGGER_DEFAULT_LEVEL:-debug}">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="stars" level="${LOGGER_STARS_LEVEL:-info}" />
+    <logger name="stars" level="${LOGGER_STARS_LEVEL:-info}"/>
+    <logger name="org.apache.kafka" level="${LOGGER_APACHE_KAFKA_LEVEL:-warn}"/>
+    <logger name="akka.serialization" level="${LOGGER_AKKA_SERIALIZATION_LEVEL:-warn}"/>
+    <logger name="akka.http" level="${LOGGER_AKKA_HTTP_LEVEL:-warn}"/>
+    <logger name="akka.cluster" level="${LOGGER_AKKA_CLUSTER_LEVEL:-warn}"/>
+    <logger name="akka.management" level="${LOGGER_AKKA_MANAGEMENT_LEVEL:-info}"/>
+    <logger name="akka.event" level="${LOGGER_AKKA_EVENT_LEVEL:-warn}"/>
+    <logger name="akka.remote" level="${LOGGER_AKKA_REMOTE_LEVEL:-warn}"/>
+    <logger name="akka.discovery" level="${LOGGER_AKKA_DISCOVERY_LEVEL:-warn}"/>
+    <logger name="akka.actor" level="${LOGGER_AKKA_ACTOR_LEVEL:-warn}"/>
+    <logger name="akka.io" level="${LOGGER_AKKA_IO_LEVEL:-warn}"/>
+    <logger name="akka.persistence" level="${LOGGER_AKKA_PERSISTENCE_LEVEL:-warn}"/>
 </configuration>

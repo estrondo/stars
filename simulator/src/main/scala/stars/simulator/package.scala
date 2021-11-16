@@ -10,8 +10,8 @@ package object simulator {
 
   implicit class StarsActorSystem(system: ActorSystem[_]) {
 
-    def getConfig(path: String): Config = system.settings.config.getConfig(path)
+    def config(path: String): Config = system.settings.config.getConfig(path)
 
-    def getConfig: Config = system.settings.config
+    def config: Config = system.settings.config
   }
 }
