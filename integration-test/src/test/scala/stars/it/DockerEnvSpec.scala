@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.testcontainers.containers.DockerComposeContainer
 import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.Wait
-import stars.testkit.docker.DockerComposeForAllSpec
+import testkit.docker.DockerComposeForAllSpec
 import sttp.client3.HttpURLConnectionBackend
 
 import java.io.File
