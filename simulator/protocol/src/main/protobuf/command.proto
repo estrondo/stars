@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "protocol.proto";
+
+package simulator.protocol;
+
+message SimulationCommand {
+
+  oneof sealed_value {
+    CreateSimulation create_simulation = 1;
+  }
+}
+
+message CreateSimulation {
+  Simulation content = 1;
+}
+
+
