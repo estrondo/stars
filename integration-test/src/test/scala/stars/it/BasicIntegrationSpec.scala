@@ -1,9 +1,9 @@
 package stars.it
 
-import stars.testkit.fixture.webapi.CreateSimulationFixture
-import stars.webapi.protocol._
+import testkit.fixture.webapi.CreateSimulationFixture
 import sttp.client3._
 import sttp.client3.playJson._
+import webapi.protocol.CreateSimulationResponse
 
 class BasicIntegrationSpec extends DockerEnvSpec {
 
@@ -22,7 +22,7 @@ class BasicIntegrationSpec extends DockerEnvSpec {
 
         val response = sttpBackend.send(request)
         response.statusText should be("Accepted")
-        val Right(CreateSimulationResponse(id, _)) = response.body
+        val Right(CreateSimulationResponse(_, _)) = response.body
 
 
       }

@@ -56,12 +56,18 @@ val AkkaPersistence = Seq(
 
 val AkkaActors = Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-  "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test
+  "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test,
+  "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion
 )
 
 val AkkaStreams = Seq(
   "com.typesafe.akka" %% "akka-stream-typed" % AkkaVersion,
   "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
+)
+
+val AkkaManagement = Seq(
+  "com.lightbend.akka.management" %% "akka-management-cluster-bootstrap" % "1.1.1",
+  "com.typesafe.akka" %% "akka-discovery" % AkkaVersion
 )
 
 val AkkaSharding = Seq(
@@ -71,9 +77,9 @@ val AkkaSharding = Seq(
 )
 
 val ScalaTestcontainers = Seq(
-  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.39.10" % Test,
-  "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.39.10" % Test,
-  "com.dimafeng" %% "testcontainers-scala-kafka" % "0.39.10" % Test
+  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.39.12" % Test,
+  "com.dimafeng" %% "testcontainers-scala-postgresql" % "0.39.12" % Test,
+  "com.dimafeng" %% "testcontainers-scala-kafka" % "0.39.12" % Test
 )
 
 val AlpakkaKafka = Seq(
@@ -131,10 +137,10 @@ lazy val `bhtree-engine` = (project in file("bhtree-engine"))
     name := "stars-burnes-hut-tree-engine"
   )
   .dependsOn(
-    `simulation-engine`
+    `simulator-engine`
   )
 
-lazy val `simulation-engine` = (project in file("simulation-engine"))
+lazy val `simulator-engine` = (project in file("simulator-engine"))
   .settings(
     name := "stars-simulation-engine"
   )
@@ -164,13 +170,14 @@ lazy val `simulator` = (project in file("simulator"))
       AkkaActors,
       AkkaStreams,
       AkkaSharding,
+      AkkaManagement,
       Logging,
       AlpakkaKafka,
       TypesafeConfig,
       Chimney
     ).flatten
   )
-  .dependsOn(`bhtree-engine`, `simulation-engine`, `simulation-protocol`, `test-kit` % Test)
+  .dependsOn(`bhtree-engine`, `simulator-engine`, `simulation-protocol`, `test-kit` % Test)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(

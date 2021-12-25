@@ -1,14 +1,31 @@
 syntax = "proto3";
 
-package stars.simulation.protocol;
+package simulation.protocol;
 
 message Segment {
-  repeated double points = 1;
+
+  // X,Y,Z - In Parsec.
+  repeated double coordinates = 1;
 }
 
 message Simulation {
+
   string id = 1;
-  Description description = 2;
+  // Owner name.
+  string name = 2;
+  // Owner e-mail.
+  string email = 3;
+  // How many stars?
+  int32 stars = 4;
+  // In solar mass.
+  double min_star_mass = 5;
+  // In solar mass.
+  double max_star_mass = 6;
+  // [-1, 1]
+  double mass_distribution = 7;
+  repeated BlackHole black_holes = 8;
+  repeated Segment segments = 9;
+  repeated Viewport viewports = 10;
 }
 
 message Vector3D {
@@ -17,7 +34,7 @@ message Vector3D {
   double z = 3;
 }
 
-// based on https://javadoc.lwjgl.org/org/lwjgl/assimp/AICamera.html
+// it's based on https://javadoc.lwjgl.org/org/lwjgl/assimp/AICamera.html
 message Viewport {
   string name = 1;
   double x = 2;
@@ -28,18 +45,6 @@ message Viewport {
   double hfov = 7;
   double near = 8;
   double far = 9;
-}
-
-message Description {
-  string name = 1;
-  string email = 2;
-  int32 stars = 3;
-  double min_star_mass = 4;
-  double max_star_mass = 5;
-  double mass_distribution = 6; // [-1, 1] ???
-  repeated BlackHole black_holes = 7;
-  repeated Segment segments = 8;
-  repeated Viewport viewports = 9;
 }
 
 message BlackHole {

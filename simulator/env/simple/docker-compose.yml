@@ -1,6 +1,14 @@
 version: "3.0"
 
 services:
+  simulator:
+    image: stars-simulator:0.0.1-SNAPSHOT
+    environment:
+      KAFKA_PRODUCER_HOST: kafka
+      KAFKA_CONSUMER_HOST: kafka
+    depends_on:
+      - kafka
+
   ## https://raw.githubusercontent.com/bitnami/bitnami-docker-kafka/3.0.0-debian-10-r29/docker-compose.yml
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.7
