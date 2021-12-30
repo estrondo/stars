@@ -100,9 +100,9 @@ lazy val root = (project in file("."))
     name := "stars-root"
   ).aggregate(`simulator-impl`, `webapi-spec`, `webapi-impl`, `test-integration`)
 
-lazy val `test-kit` = (project in file("test/kit"))
+lazy val `test-kit` = (project in file("test-kit"))
   .settings(
-    name := "testki",
+    name := "test-kit",
     libraryDependencies ++= dependencies(
       ScalaTestcontainers,
       ScalaTest
@@ -110,7 +110,7 @@ lazy val `test-kit` = (project in file("test/kit"))
   )
   .dependsOn(`simulator-protocol`, `webapi-spec`)
 
-lazy val `test-integration` = (project in file("test/integration"))
+lazy val `test-integration` = (project in file("test-integration"))
   .settings(
     name := "test-integration",
     libraryDependencies ++= Seq(
@@ -131,7 +131,7 @@ lazy val `test-integration` = (project in file("test/integration"))
     buildInfoPackage := "stars"
   )
 
-lazy val `simulator-engine-bhtree` = (project in file("simulator/engine/bhtree"))
+lazy val `simulator-engine-bhtree` = (project in file("simulator-engine-bhtree"))
   .settings(
     name := "stars-simulator-engine-bhtree"
   )
@@ -139,13 +139,13 @@ lazy val `simulator-engine-bhtree` = (project in file("simulator/engine/bhtree")
     `simulator-engine-spec`
   )
 
-lazy val `simulator-engine-spec` = (project in file("simulator/engine/spec"))
+lazy val `simulator-engine-spec` = (project in file("simulator-engine-spec"))
   .settings(
     name := "stars-simulator-engine-spec"
   )
   .dependsOn(`simulator-protocol`)
 
-lazy val `simulator-protocol` = (project in file("simulator/protocol"))
+lazy val `simulator-protocol` = (project in file("simulator-protocol"))
   .settings(
     name := "stars-simulator-protocol",
     Compile / PB.targets := Seq(
@@ -160,12 +160,12 @@ lazy val `simulator-protocol` = (project in file("simulator/protocol"))
     )
   )
 
-lazy val `simulator-protocol-testkit` = (project in file("simulator/protocol-testkit/"))
+lazy val `simulator-protocol-testkit` = (project in file("simulator-protocol-testkit"))
   .settings(
     name := "stars-simulator-protocol-testkit"
   )
 
-lazy val `simulator-impl` = (project in file("simulator/impl"))
+lazy val `simulator-impl` = (project in file("simulator-impl"))
   .settings(
     name := "stars-simulator-impl",
     libraryDependencies ++= dependencies(
@@ -190,7 +190,7 @@ lazy val `simulator-impl` = (project in file("simulator/impl"))
   )
   .settings()
 
-lazy val `webapi-spec` = (project in file("webapi/spec"))
+lazy val `webapi-spec` = (project in file("webapi-spec"))
   .settings(
     name := "stars-webapi-spec",
     libraryDependencies ++= Seq(
@@ -199,7 +199,7 @@ lazy val `webapi-spec` = (project in file("webapi/spec"))
   )
   .dependsOn(`simulator-protocol`)
 
-lazy val `webapi-impl` = (project in file("webapi/impl"))
+lazy val `webapi-impl` = (project in file("webapi-impl"))
   .settings(
     name := "stars-webapi-impl",
     libraryDependencies ++= Seq(
