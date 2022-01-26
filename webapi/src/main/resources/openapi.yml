@@ -1,0 +1,155 @@
+openapi: "3.0.2"
+info:
+  title: Stars Simulator
+  version: "1.0"
+servers:
+  - url: https://stars.estrondo.io/v1
+paths:
+  /simulation:
+    post:
+      operationId: create-simulation
+      summary: Create a new Simulation.
+      tags:
+        - creation
+      requestBody:
+        description: Simulation description.
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/CreateSimulation"
+      responses:
+        '202':
+          description: Simulation accepted, but it is not ready yet.
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/CreateSimulationResponse"
+components:
+  schemas:
+    CreateSimulation:
+      description: Pedido de criação de simulação.
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of your simulation.
+        email:
+          type: string
+          description: Your e-mail, where we will send you informations about.
+        stars:
+          type: integer
+          description: How many stars do you want?
+          minimum: 0
+        minStarMass:
+          type: number
+          format: double
+          description: Minimum weight of a star, it is Solar Mass Unit.
+        maxStarMass:
+          type: number
+          format: double
+          description: Maximum weight of a star, it is Solar Mass Unit.
+        massDistribution:
+          type: number
+          format: double
+          description: Mass distribution between stars, range [-1, 1].
+        blackHoles:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateBlackHole"
+        branches:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateBranch"
+        viewports:
+          type: array
+          nullable: false
+          items:
+            $ref: "#/components/schemas/CreateViewport"
+    CreateBlackHole:
+      description: Black Hole description.
+      type: object
+      properties:
+        solarMass:
+          type: number
+          format: double
+          description: Black hole mass in Solar Mass Unit.
+        x:
+          type: number
+          format: double
+          description: X position in Parsec.
+        y:
+          type: number
+          format: double
+          description: Y position in Parsec.
+        z:
+          type: number
+          format: double
+          description: Z position in Parsec.
+    CreateBranch:
+      type: object
+      description: A galaxy branch.
+      properties:
+        coordinates:
+          type: array
+          description: Branch coordinates, each coordinate is a three coordinates sequence (X,Y,Z) in Parsec.
+          items:
+            type: number
+            format: double
+    CreateViewport:
+      type: object
+      description: Each viewport will produce a output video. <br />It's based on https://javadoc.lwjgl.org/org/lwjgl/assimp/AICamera.html
+      properties:
+        name:
+          type: string
+          description: Viewport name.
+        x:
+          type: number
+          format: double
+          description: X position, in Parsec.
+        y:
+          type: number
+          format: double
+          description: Y position, in Parsec.
+        z:
+          type: number
+          format: double
+          description: Z position, in Parsec.
+        up:
+          $ref: "#/components/schemas/ViewportVector"
+          description: Up Vector.
+        lookAt:
+          $ref: "#/components/schemas/ViewportVector"
+        hvof:
+          type: number
+          format: double
+          description: Half field of view, in degree.
+        near:
+          type: number
+          format: double
+          description: Minimum distance of an object.
+        far:
+          type: number
+          format: double
+          description: Maximum distance of an object.
+    CreateSimulationResponse:
+      description: A description of simulation.
+      type: object
+      properties:
+        id:
+          type: string
+    ViewportVector:
+      type: object
+      properties:
+        i:
+          type: number
+          format: double
+          description: X direction.
+        j:
+          type: number
+          format: double
+          description: Y direction.
+        k:
+          type: number
+          format: double
+          description: Z direction.

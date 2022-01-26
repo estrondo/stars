@@ -10,3 +10,4 @@ project/*
 !project/build.properties
 !project/plugins.sbt
 .attach_pid*
+webapi-client/*

@@ -1,24 +1,25 @@
-ThisBuild / organization := "com.estrondo"
-ThisBuild / scalaVersion := "2.13.7" //PlayVersion.scalaVersion
-ThisBuild / version := "0.0.1-SNAPSHOT"
+ThisBuild / organization := "io.estrondo"
+ThisBuild / scalaVersion := "2.13.7"
+ThisBuild / version := "1.0.0-SNAPSHOT"
 ThisBuild / scalacOptions ++= Seq(
   "-deprecation",
   "-feature",
   "-unchecked",
   "-Xlint",
   "-Ywarn-dead-code",
-  "-Ywarn-numeric-widen"
+  "-Ywarn-numeric-widen",
+  "-Xlint:unused"
 )
 
 ThisBuild / Test / fork := true
 
-
-val AkkaVersion = "2.6.14" //PlayVersion.akkaVersion
-val AkkaKafkaVersion = "2.1.0"
+val AkkaVersion = "2.6.18"
+val AkkaKafkaVersion = "2.1.1"
 val JacksonVersion = "2.11.4"
+val AkkaHttpVersion = "10.2.7"
 
 val Flyway = Seq(
-  "org.flywaydb" % "flyway-core" % "8.0.2"
+  "org.flywaydb" % "flyway-core" % "8.3.0"
 )
 val ScalaTest = Seq(
   "org.scalatest" %% "scalatest" % "3.2.10" % Test
@@ -29,16 +30,16 @@ val Postgres = Seq(
 )
 
 val Macwire = Seq(
-  "com.softwaremill.macwire" %% "macros" % "2.5.0" % Provided
+  "com.softwaremill.macwire" %% "macros" % "2.5.2" % Provided
 )
 
 val ScalaMock = Seq(
-  "org.scalamock" %% "scalamock" % "5.1.0" % Test
+  "org.scalamock" %% "scalamock" % "5.2.0" % Test
 )
 
 val Logging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
-  "ch.qos.logback" % "logback-classic" % "1.2.6"
+  "ch.qos.logback" % "logback-classic" % "1.2.10"
 )
 
 val TypesafeConfig = Seq(
@@ -46,7 +47,7 @@ val TypesafeConfig = Seq(
 )
 
 val ScalaPB = Seq(
-  "com.thesamet.scalapb" %% "compilerplugin" % "0.11.3"
+  "com.thesamet.scalapb" %% "compilerplugin" % "0.11.7"
 )
 
 val AkkaPersistence = Seq(
@@ -57,12 +58,18 @@ val AkkaPersistence = Seq(
 val AkkaActors = Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test,
-  "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion
+  "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion,
+  "com.typesafe.akka" %% "akka-remote" % AkkaVersion
 )
 
 val AkkaStreams = Seq(
   "com.typesafe.akka" %% "akka-stream-typed" % AkkaVersion,
   "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
+)
+
+val AkkaHttp = Seq(
+  "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
+  "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
 )
 
 val AkkaManagement = Seq(
@@ -86,7 +93,7 @@ val AlpakkaKafka = Seq(
   "com.typesafe.akka" %% "akka-stream-kafka" % AkkaKafkaVersion,
   "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
   "com.typesafe.akka" %% "akka-discovery" % AkkaVersion,
-  //"com.fasterxml.jackson.core" % "jackson-databind" % JacksonVersion,
+  // "com.fasterxml.jackson.core" % "jackson-databind" % JacksonVersion,
   "com.typesafe.akka" %% "akka-stream-kafka-testkit" % AkkaKafkaVersion % Test,
   "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
 )
@@ -95,49 +102,35 @@ val Chimney = Seq(
   "io.scalaland" %% "chimney" % "0.6.1"
 )
 
+val Octopus = Seq(
+  "com.github.krzemin" %% "octopus" % "0.4.1"
+)
+
 lazy val root = (project in file("."))
   .settings(
     name := "stars-root"
-  ).aggregate(`simulator-impl`, `webapi-spec`, `webapi-impl`, `test-integration`)
-
-lazy val `test-kit` = (project in file("test-kit"))
-  .settings(
-    name := "test-kit",
-    libraryDependencies ++= dependencies(
-      ScalaTestcontainers,
-      ScalaTest
-    ).map(removeConfiguration)
   )
-  .dependsOn(`simulator-protocol`, `webapi-spec`)
+  .aggregate(
+    `akka-helper`,
+    `simulator-impl`,
+    `simulator-protocol`,
+    `simulator-engine-spec`,
+    `simulator-engine-bhtree`,
+    `simulator-protocol-testkit`,
+    `webapi`,
+    `webapi-core`,
+    `webapi-simulator`,
+    `util`
+  )
 
-lazy val `test-integration` = (project in file("test-integration"))
-  .settings(
-    name := "test-integration",
-    libraryDependencies ++= Seq(
-      lagomScaladslTestKit,
-      "com.softwaremill.sttp.client3" %% "core" % "3.3.16" % Test,
-      "com.softwaremill.sttp.client3" %% "play-json" % "3.3.16" % Test
-    ) ++ dependencies(
-      ScalaTest,
-      ScalaTestcontainers,
-      AlpakkaKafka,
-      Logging
+lazy val `simulator-engine-bhtree` =
+  (project in file("simulator-engine-bhtree"))
+    .settings(
+      name := "stars-simulator-engine-bhtree"
     )
-  )
-  .dependsOn(`test-kit` % Test, `simulator-protocol`, `webapi-spec`)
-  .enablePlugins(BuildInfoPlugin)
-  .settings(
-    buildInfoKeys := Seq(version),
-    buildInfoPackage := "stars"
-  )
-
-lazy val `simulator-engine-bhtree` = (project in file("simulator-engine-bhtree"))
-  .settings(
-    name := "stars-simulator-engine-bhtree"
-  )
-  .dependsOn(
-    `simulator-engine-spec`
-  )
+    .dependsOn(
+      `simulator-engine-spec`
+    )
 
 lazy val `simulator-engine-spec` = (project in file("simulator-engine-spec"))
   .settings(
@@ -160,10 +153,11 @@ lazy val `simulator-protocol` = (project in file("simulator-protocol"))
     )
   )
 
-lazy val `simulator-protocol-testkit` = (project in file("simulator-protocol-testkit"))
-  .settings(
-    name := "stars-simulator-protocol-testkit"
-  )
+lazy val `simulator-protocol-testkit` =
+  (project in file("simulator-protocol-testkit"))
+    .settings(
+      name := "stars-simulator-protocol-testkit"
+    )
 
 lazy val `simulator-impl` = (project in file("simulator-impl"))
   .settings(
@@ -181,59 +175,90 @@ lazy val `simulator-impl` = (project in file("simulator-impl"))
       Chimney
     )
   )
-  .dependsOn(`simulator-engine-bhtree`, `simulator-engine-spec`, `simulator-protocol`, `test-kit` % Test)
+  .dependsOn(
+    `simulator-engine-bhtree`,
+    `simulator-engine-spec`,
+    `simulator-protocol`
+  )
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(
-    dockerBaseImage := "openjdk:11-jdk-slim-buster",
-    dockerEnvVars ++= SimulatorInfo.EnvVars
+    dockerBaseImage := "openjdk:11-jdk-slim-buster"
   )
   .settings()
 
-lazy val `webapi-spec` = (project in file("webapi-spec"))
+lazy val `webapi-simulator` = (project in file("webapi-simulator"))
   .settings(
-    name := "stars-webapi-spec",
-    libraryDependencies ++= Seq(
-      lagomScaladslApi
-    )
-  )
-  .dependsOn(`simulator-protocol`)
-
-lazy val `webapi-impl` = (project in file("webapi-impl"))
-  .settings(
-    name := "stars-webapi-impl",
-    libraryDependencies ++= Seq(
-      lagomScaladslKafkaBroker,
-      lagomScaladslPersistenceJdbc,
-      lagomScaladslTestKit,
-      lagomScaladslAkkaDiscovery
-    ) ++ dependencies(
-      Macwire,
-      Postgres,
-      Flyway,
-      ScalaTest,
-      AkkaPersistence,
+    name := "stars-webapi-simulator",
+    libraryDependencies ++= dependencies(
+      AkkaSharding,
       AlpakkaKafka,
-      Logging,
-      ScalaTestcontainers,
+      ScalaTest,
       Chimney,
-      TypesafeConfig
+      ScalaTestcontainers
     )
   )
-  .dependsOn(`webapi-spec`, `simulator-protocol`, `test-kit` % Test)
-  .enablePlugins(LagomScala)
+  .dependsOn(`webapi-core`, `simulator-protocol`, `webapi-core-test` % Test)
+
+lazy val `webapi-core` = (project in file("webapi-core"))
   .settings(
-    lagomCassandraEnabled := false,
-    dockerBaseImage := "openjdk:11-jdk-slim-buster",
-    Docker / packageName := "stars-webapi",
-    dockerExposedPorts := Seq(9000),
-    dockerExposedVolumes := Seq(
-      "/opt/docker"
+    name := "stars-webapi-core",
+    libraryDependencies ++= dependencies(
+      AkkaSharding,
+      ScalaTest,
+      Octopus,
+      ScalaMock
     )
   )
-  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`akka-helper`, `util`)
+
+lazy val `webapi-core-test` = (project in file("webapi-core-test"))
   .settings(
-    Test / javaOptions ++= Seq("--illegal-access=warn")
+    name := "stars-webapi-core-test",
+    libraryDependencies ++= dependencies(
+      ScalaTest,
+      ScalaMock
+    )
+  )
+  .dependsOn(`webapi-core`)
+
+lazy val `webapi` = (project in file("webapi"))
+  .settings(
+    name := "stars-webapi",
+    libraryDependencies ++= Seq(
+      "io.estrondo" % "stars-webapi-client" % version.value % Test
+    ) ++ dependencies(
+      AkkaHttp,
+      AkkaActors,
+      AkkaStreams,
+      AlpakkaKafka,
+      Macwire,
+      Chimney,
+      ScalaTest,
+      ScalaTestcontainers
+    ),
+    openApiInputSpec := "webapi/src/main/resources/openapi.yml",
+    openApiConfigFile := "webapi/src/main/resources/openapi-config.yml",
+    resolvers ++= Seq(
+      Resolver.mavenLocal
+    )
+  )
+  .dependsOn(`webapi-core`, `webapi-simulator`, `akka-helper`, `util`)
+
+lazy val `util` = (project in file("util"))
+  .settings(
+    name := "stars-util"
+  )
+
+lazy val `akka-helper` = (project in file("akka-helper"))
+  .settings(
+    name := "stars-akka-helper",
+    libraryDependencies ++= dependencies(
+      AkkaActors,
+      TypesafeConfig,
+      AkkaSharding,
+      Logging
+    )
   )
 
 def dependencies(modules: Seq[ModuleID]*): Seq[ModuleID] = {
