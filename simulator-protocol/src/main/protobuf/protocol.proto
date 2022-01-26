@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package simulator.protocol;
+
+message Branch {
+  repeated double coordinates = 1;
+}
+
+message Simulation {
+
+  string id = 1;
+  // Owner name.
+  string name = 2;
+  // Owner e-mail.
+  string email = 3;
+  // How many stars?
+  int32 stars = 4;
+  // In solar mass.
+  double min_star_mass = 5;
+  // In solar mass.
+  double max_star_mass = 6;
+  // [-1, 1]
+  double mass_distribution = 7;
+  repeated BlackHole black_holes = 8;
+  repeated Branch branches = 9;
+  repeated Viewport viewports = 10;
+}
+
+message BlackHole {
+  double solar_mass = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+}
+
+// it's based on https://javadoc.lwjgl.org/org/lwjgl/assimp/AICamera.html
+message Viewport {
+  string name = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+  ViewportVector up = 5;
+  ViewportVector look_at = 6;
+  double hfov = 7;
+  double near = 8;
+  double far = 9;
+}
+
+message ViewportVector {
+  double i = 1;
+  double j = 2;
+  double k = 3;
+}

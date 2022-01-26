@@ -1,0 +1,12 @@
+artifactId: stars-webapi-client
+groupId: io.estrondo
+generatorName: java
+artifactVersion: 2.0.0
+snapshotVersion: off
+library: native
+apiPackage: stars.webapi.client.api
+modelPackage: stars.webapi.client.model
+invokerPackage: stars.webapi.client
+outputDir: webapi-client
+additionalProperties:
+  dateLibrary: "java8"

@@ -1,6 +1,3 @@
 package webapi.protocol
 
-case class CreateSimulationResponse(
-  id: String,
-  simulation: CreateSimulation
-)
+case class CreateSimulationResponse(id: String)

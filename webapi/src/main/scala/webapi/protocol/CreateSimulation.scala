@@ -1,14 +1,13 @@
 package webapi.protocol
 
-import simulation.protocol.SolarMass
-
 case class CreateSimulation(
-  name: String,
-  email: String,
-  segments: Seq[Segment],
-  stars: Option[Int],
-  minStarMass: Option[SolarMass],
-  maxStarMass: Option[SolarMass],
-  massDistribution: Option[Double],
-  blackHoles: Seq[BlackHole]
+    name: String,
+    email: String,
+    stars: Option[Int],
+    minStarMass: Option[Double],
+    maxStarMass: Option[Double],
+    massDistribution: Option[Double],
+    blackHoles: Seq[CreateBlackHole],
+    branches: Seq[CreateBranch],
+    viewports: Seq[CreateViewport]
 )
